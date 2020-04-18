@@ -22,7 +22,8 @@ smtp-from=donate@example.org
 # Your information
 your-name=Joe Bloe
 your-email=joe@example.org
-# ^ you should have a gravatar that works with this email
+# ^ to show your logo in the index page, you can have a gravatar account associated with this email address
+# else, you can add your 'logo.png' to the 'static' folder!
 
 # SQL connection string
 connection-string=postgresql://postgres@localhost/fosspay
@@ -70,6 +71,9 @@ liberapay-campaign=
 # Generate personal access key at https://github.com/settings/tokens
 # Must have "user" access.
 github-token=
+
+# Optional OpenCollective integration, fill in your collective's username here
+opencollective-campaign=
 
 # Command to reload fosspay (send it a SIGHUP)
 reload-command=kill -HUP $(pgrep -xf '/usr/bin/python3.*app.py' | tail -n 1)

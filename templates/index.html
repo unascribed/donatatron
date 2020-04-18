@@ -28,25 +28,20 @@ window.email = "{{user.email}}";
 {% endblock %}
 {% block body %} 
 <div class="well">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-8 col-md-offset-2">
-              <img
-                class="pull-right"
-                src="{{ avatar }}?s=128"
-                style="border-radius: 5px; margin-left: 1rem"
-                width="128" height="128" />
-              <h1>Donate to {{ _cfg("your-name") }}</h1>
-              {% include "summary.html" %}
-            </div>
-        </div>
+    <div class="container clearfix">
+      <img
+        class="pull-right logo"
+        src="{{ avatar }}"/>
+      <h1>Donate to {{ _cfg("your-name") }}</h1>
     </div>
+</div>
+<div class="container" style="text-align: justify">
+    {% include "summary.html" %}
 </div>
 <noscript>
     <div class="container">
         <div class="alert alert-danger">
-            <p>This page requires Javascript. It's necessary to send your credit card number to
-            <a href="https://stripe.com/">Stripe</a> directly, so you don't need to trust me with it.</p>
+            This page requires Javascript. It's necessary to send your credit card number to <a href="https://stripe.com/">Stripe</a> directly, so you don't need to trust me with it.
         </div>
     </div>
 </noscript>
@@ -60,83 +55,59 @@ window.email = "{{user.email}}";
     </form>
 </div>
 <div class="container text-center" id="donation-stuff">
-  <h3>How much?</h3>
-  <div class="row">
-    <div class="col-md-8 col-md-offset-2">
-      <div class="btn-group btn-group-justified amounts" role="group" aria-label="...">
-        {% for amt in _cfg("default-amounts").split(" ") %}
-        <div class="btn-group" role="group">
+    <h3>How much?</h3>
+    <div>
+        <div class="buttonbar amounts" role="group" aria-label="...">
+          {% for amt in _cfg("default-amounts").split(" ") %}
           <button data-amount="{{ amt }}" type="button"
-            class="btn btn-default {{"active" if _cfg("default-amount") == amt else ""}}"
+            class="{{"active" if _cfg("default-amount") == amt else ""}}"
             >{{ currency.amount(amt) }}</button>
+          {% endfor %}
+          <button data-amount="custom" type="button" class="button-spicy">Custom</button>
         </div>
-        {% endfor %}
-        <div class="btn-group" role="group">
-          <button data-amount="custom" type="button" class="btn btn-default">Custom</button>
-        </div>
-      </div>
     </div>
-  </div>
-  <div class="row hidden" id="custom-amount" style="margin-top: 20px;">
-    <div class="col-md-4 col-md-offset-4">
-      <div class="form-group">
-        <div class="input-group">
-          <span class="input-group-addon">{{ currency.symbol }}</span>
-          <input id="custom-amount-text" type="text" value="13.37"
-              class="form-control" placeholder="Amount" />
-        </div>
-      </div>
+    <div class="hidden" id="custom-amount" style="margin-top: 20px;">
+        <span class="input-addon">{{ currency.symbol }}</span><input id="custom-amount-text" type="text" value="13.37" placeholder="Amount" size="6" />
     </div>
-  </div>
-  <h3>How often?</h3>
-  <div class="row">
-    <div class="col-md-4 col-md-offset-4">
-      <div class="form-group">
-        <div class="btn-group btn-group-justified frequencies" role="group" aria-label="...">
-          <div class="btn-group" role="group">
-            <button data-frequency="once" type="button"
-              class="btn btn-default {{"active" if _cfg("default-type")=="once" else ""}}"
-            >Once</button>
-          </div>
-          <div class="btn-group" role="group">
-            <button data-frequency="monthly" type="button"
-              class="btn btn-default {{"active" if _cfg("default-type")=="monthly" else ""}}"
-            >Monthly</button>
-          </div>
+    <div style="margin-top: 16px; text-align: justify;">
+        Due to payment processor fees, I will actually receive <strong>$<span id="after-fees">0.00</span></strong>, after a 2.9% + 30¢ ($<span id="fee">0.00</span>) fee; that's <span id="fee-pct-wrapper"><span id="fee-pct">0</span>% of your donation</span>.* The fees go to Stripe.
+        {% if _cfg("patreon-campaign") or _cfg("opencollective-campaign") %}
+        <br/><br/>
+        At the very least, that's still better than {%if patreon_count and oc_count %}Patreon and OpenCollective's{%elif patreon_count%}Patreon's{%elif oc_count%}OpenCollective's{%endif%} additional 5% fee on top of Stripe's fee. {%if _cfg("liberapay-campaign")%}If you can figure out how to use the damned thing, it may be better to support me on <a href="https://liberapay.com/{{ _cfg("liberapay-campaign")}}">Liberapay</a> if you already support others there, to smooth the fees out.{%endif%}
+        {%endif%}
+    </div>
+    <h3>How often?</h3>
+    <div>
+        <div class="buttonbar frequencies" role="group" aria-label="...">
+          <button data-frequency="once" type="button"
+            class="btn btn-default {{"active" if _cfg("default-type")=="once" else ""}}"
+          >Once</button>
+          <button data-frequency="monthly" type="button"
+            class="btn btn-default {{"active" if _cfg("default-type")=="monthly" else ""}}"
+          >Monthly</button>
         </div>
-     </div>
-   </div>
- </div>
+    </div>
     {% if len(projects) > 1 %}
-    <h3>What project?</h3>
-    <div class="row">
-        <div class="col-md-4 col-md-offset-4">
-            <div class="form-group">
-                <select id="project" name="project" class="form-control">
-                    <option value="null"
-                        {{ "selected" if selected_project == None else "" }}>None in particular</option>
-                    {% for project in projects %}
-                    <option value="{{ project.id }}"
-                        {{ "selected" if selected_project == project.id else "" }}>{{ project.name }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-        </div>
-    </div>
+    <h3>What for?</h3>
+    <select id="project" name="project" style="width: calc(100% - 32px)">
+        <option value="null"
+            {{ "selected" if selected_project == None else "" }}>Nothing in particular</option>
+        {% for project in projects %}
+        <option value="{{ project.id }}"
+            {{ "selected" if selected_project == project.id else "" }}>{{ project.name }}</option>
+        {% endfor %}
+    </select>
     {% endif %}
-    <div class="row">
-        <div class="col-md-4 col-md-offset-4">
-            <div class="form-group">
-                <input type="text" id="comments" class="form-control" placeholder="Any comments?" maxlength="512" />
-            </div>
-        </div>
+    <br/><br/>
+    <div style="margin-bottom: 16px">
+        <input type="text" id="comments" class="form-control" placeholder="Want to say anything?" maxlength="512" style="width: calc(100% - 32px); display: initial !important" />
     </div>
     <div class="row">
         <div class="col-md-4 col-md-offset-4">
             <div class="alert alert-danger hidden" id="errors">
                 <p></p>
             </div>
-            <button class="btn btn-block btn-success" id="donate-button">Donate</button>
+            <button class="button-happy" id="donate-button">Donate</button>
         </div>
     </div>
 </div>
@@ -145,15 +116,23 @@ window.email = "{{user.email}}";
 <div class="container text-center">
     {% if not user %}
     <p>
-        <small class="text-muted">
-            Been here before? <a href="login">Log in</a> to view your donation
-            history, edit recurring donations, and so on.
-        </small>
+        Been here before? <a href="login">Log in</a> to view your donation
+        history, edit recurring donations, and so on.
+    </p>
+    {% elif user.admin %}
+    <p>
+        Want to go to <a href="admin">the admin panel</a>?
     </p>
     {% endif %}
     <p>
+        <small>* This is just an estimate; the final fee may be different.</small>
+    </p>
+    </p>
+    <p>
         <small class="text-muted">
-            Powered by <a href="https://github.com/ddevault/fosspay">fosspay</a>.
+            Powered by <a href="https://github.com/ddevault/fosspay">fosspay</a>, with some patches from <a href="https://gitlab.kokakiwi.net/transposees/transpay">transpay</a>.
+            <br/>
+            Modified by <a href="https://unascribed.com">unascribed</a> to add some new features and remove Bootstrap styling.
         </small>
     </p>
 </div>

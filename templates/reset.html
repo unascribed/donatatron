@@ -27,14 +27,16 @@
                         <input class="form-control" type="password" name="password" placeholder="New password" />
                         <input type="hidden" name="token" value="{{ token }}" />
                     </div>
-                    <input type="submit" value="Submit" class="btn btn-primary" />
+                    <p></p>
+                    <button>Submit</button>
                 </form>
             {% else %}
                 <form action="{{root}}/password-reset" method="POST">
                     <div class="form-group">
                         <input class="form-control" type="text" name="email" placeholder="your@example.org" />
                     </div>
-                    <input type="submit" value="Submit" class="btn btn-primary" />
+                    <p></p>
+                    <button>Submit</button>
                 </form>
             {% endif %}
         </div>

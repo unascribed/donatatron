@@ -2,15 +2,18 @@
 {% block body %} 
 <div class="well">
     <div class="container">
-        <p class="pull-right">
-            <a class="btn btn-primary" href="..">Donate again</a>
-            <a class="btn btn-default" href="logout">Log out</a>
-        </p>
+        <div class="pull-right">
+	        Logged in as {{user.email}}
+            <a href=".."><button class="button-happy">Donate again</button></a>
+            <form style="display: inline-block" method="POST" action="logout"><button>Log out</button></form>
+        </div>
+        <div class="clearfix"></div>
         <h1>Your Donations</h1>
     </div>
 </div>
 <div class="container">
     {% if any(recurring(user)) %}
+    {% set something = true %}
     <h2>Monthly Donations</h2>
     <table class="table">
         <thead>
@@ -18,15 +21,15 @@
                 <th style="width: 10%"></th>
                 <th>Date</th>
                 <th>Amount</th>
-                <th>Project</th>
+                <th>Purpose</th>
             </tr>
         </thead>
         <tbody>
         {% for donation in recurring(user) %}
             <tr>
                 <td>
-                    <form method="DELETE" action="{{root}}/cancel/{{ donation.id }}">
-                        <button type="submit" class="btn btn-danger btn-sm">Cancel</button>
+                    <form method="POST" action="{{root}}/cancel/{{ donation.id }}">
+                        <button type="submit" class="button-spicy">Cancel</button>
                     </form>
                 </td>
                 <td>{{ donation.created.strftime("%Y-%m-%d") }}</td>
@@ -38,6 +41,7 @@
     </table>
     {% endif %}
     {% if any(one_times(user)) %}
+    {% set something = true %}
     <h2>One-time Donations</h2>
     <table class="table">
         <thead>
@@ -57,6 +61,11 @@
         {% endfor %}
         </tbody>
     </table>
+    {% endif %}
+    {% if not something %}
+    <p>
+        There's nothing here! :(
+    </p>
     {% endif %}
 </div>
 {% endblock %}

@@ -2,10 +2,9 @@
 <div class="container" style="padding-top: 5rem">
   <div class="row">
     <div class="col-md-8 col-md-offset-2">
-      {% set total_sum = recurring_sum + patreon_sum + lp_sum + gh_sum %}
-      {% set total_count = recurring_count + patreon_count + lp_count + gh_count %}
-      {% if _cfg("goal") %}
-      {% set goal = int(_cfg("goal")) %}
+      {% set total_sum = recurring_sum + patreon_sum + lp_sum + gh_sum + oc_sum %}
+      {% set total_count = recurring_count + patreon_count + lp_count + gh_count + oc_count %}
+      {% set goal = int(_cfg("goal") or total_sum) %}
 
       {% if goal < total_sum %}
       {# Make the graph still make sense if we exceeded the goal #}
@@ -18,37 +17,47 @@
       {% set patreon_progress = patreon_sum / adjusted_goal %}
       {% set lp_progress = lp_sum / adjusted_goal %}
       {% set gh_progress = gh_sum / adjusted_goal %}
+      {% set oc_progress = oc_sum / adjusted_goal %}
       {% set progress = total_sum / goal %}
-      <div class="progress" style="height: 3rem">
+      <div class="progress">
         <div
-          class="progress-bar progress-bar-primary"
-          style="width: {{ recurring_progress * 100 }}%; line-height: 2.5"
+          class="progress-bar"
+          style="width: {{ recurring_progress * 100 }}%; background-color: #009688; color: #FFF"
         >
           <span>{{ currency.amount("{:.0f}".format(recurring_sum / 100)) }}</span>
         </div>
 
         <div
-          class="progress-bar progress-bar-info"
-          style="width: {{ patreon_progress * 100 }}%; line-height: 2.5"
+          class="progress-bar"
+          style="width: {{ patreon_progress * 100 }}%; background-color: #FF5722; color: #FFF"
         >
           <span>{{ currency.amount("{:.0f}".format(patreon_sum / 100)) }}</span>
         </div>
 
         <div
           class="progress-bar progress-bar-warning"
-          style="width: {{ lp_progress * 100 }}%; line-height: 2.5"
+          style="width: {{ lp_progress * 100 }}%; background-color: #C8A411; color: #FFF"
         >
           <span>{{ currency.amount("{:.0f}".format(lp_sum / 100)) }}</span>
         </div>
 
         <div
           class="progress-bar progress-bar-primary"
-          style="width: {{ gh_progress * 100 }}%; line-height: 2.5"
+          style="width: {{ gh_progress * 100 }}%; background-color: #1A2327; color: #FFF"
         >
           <span>{{ currency.amount("{:.0f}".format(gh_sum / 100)) }}</span>
         </div>
+        <div
+          class="progress-bar progress-bar-primary"
+          style="width: {{ oc_progress * 100 }}%; background-color: #1E88E5; color: #FFF"
+        >
+          <span>{{ currency.amount("{:.0f}".format(oc_sum / 100)) }}</span>
+        </div>
+        {% if goal and total_sum > goal %}
+        {% set marker_pos = (goal / total_sum) * 100 %}
+        <div class="progress-marker" style="left: {{ marker_pos }}%"><div class="label {% if marker_pos < 50 %}right{%endif%}">Goal</div></div>
+        {%endif%}
       </div>
-      {% endif %}
     </div>
   </div>
   <div class="row">
@@ -56,7 +65,7 @@
       {% if patreon_count or lp_count %}
       <p>
         {{ currency.amount("{:.2f}".format(recurring_sum / 100)) }}/mo
-        via <strong class="text-primary">{{ domain }}</strong>
+        via <strong style="color: #009688">{{ domain }}</strong>
         ({{ recurring_count }} supporter{{ "s" if recurring_count != 1 else "" }})
       </p>
       {% if patreon_count %}
@@ -65,20 +74,15 @@
         via
         <strong><a
           href="https://patreon.com/{{ _cfg("patreon-campaign") }}"
-          style="color: #51acc7">
-            Patreon <i class="glyphicon glyphicon-share"></i>
-          </a></strong> ({{ patreon_count }} supporter{{ "s" if patreon_count != 1 else "" }})
+          style="color: #FF5722">Patreon</a></strong> ({{ patreon_count }} supporter{{ "s" if patreon_count != 1 else "" }})
       </p>
       {% endif %}
       {% if lp_count %}
       <p>
         {{ currency.amount("{:.2f}".format(lp_sum / 100)) }}/mo
         via
-        <strong><a
-          class="text-warning"
-          href="https://liberapay.com/{{ _cfg("liberapay-campaign") }}">
-            Liberapay <i class="glyphicon glyphicon-share"></i>
-          </a></strong> ({{ lp_count }} supporter{{ "s" if lp_count != 1 else "" }})
+        <strong><a style="color: #C8A411"
+          href="https://liberapay.com/{{ _cfg("liberapay-campaign") }}">Liberapay</a></strong> ({{ lp_count }} supporter{{ "s" if lp_count != 1 else "" }})
       </p>
       {% endif %}
       {% if gh_count %}
@@ -86,19 +90,28 @@
         {{ currency.amount("{:.2f}".format(gh_sum / 100)) }}/mo
         via
         <strong><a
-          class="text-primary"
-          href="https://github.com/{{gh_user}}">
-            GitHub <i class="glyphicon glyphicon-share"></i>
-          </a></strong> ({{ gh_count }} supporter{{ "s" if lp_count != 1 else "" }})
+          href="https://github.com/{{gh_user}}" style="color: #1A2327">
+            GitHub
+          </a></strong> ({{ gh_count }} supporter{{ "s" if gh_count != 1 else "" }})
+      </p>
+      {% endif %}
+      {% if oc_count %}
+      <p>
+        {{ currency.amount("{:.2f}".format(oc_sum / 100)) }}/mo
+        via
+        <strong><a
+          href="https://opencollective.com/{{_cfg("opencollective-campaign")}}" style="color: #1E88E5">
+            OpenCollective
+          </a></strong> ({{ oc_count }} supporter{{ "s" if oc_count != 1 else "" }})
       </p>
       {% endif %}
       {% endif %}
-      {% if goal %}
+      {% if _cfg("goal") %}
       <p class="{{ "text-center" if not patreon_sum else "" }}">
         {{ currency.amount("{:.2f}".format(total_sum / 100))}}/mo
         of
         {{ currency.amount("{:.2f}".format(goal / 100)) }}/mo
-        goal
+        goal ({{"{:.1f}".format((total_sum/goal)*100)}}%{% if total_sum > goal %}! <img src="static/tada.svg" width="24" height="24" alt="🎉" title=":tada:"/>{%endif%})
       </p>
       {% else %}
       <p>

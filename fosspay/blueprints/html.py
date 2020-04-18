@@ -26,7 +26,12 @@ def index():
         load_config()
         return render_template("setup.html")
     projects = sorted(Project.query.all(), key=lambda p: p.name)
-    avatar = "//www.gravatar.com/avatar/" + hashlib.md5(_cfg("your-email").encode("utf-8")).hexdigest()
+
+    if os.path.exists('static/logo.png'):
+        avatar = os.path.join('static/logo.png')
+    else:
+        avatar = "//www.gravatar.com/avatar/" + hashlib.md5(_cfg("your-email").encode("utf-8")).hexdigest()
+
     selected_project = request.args.get("project")
     if selected_project:
         try:
@@ -51,6 +56,8 @@ def index():
             patreon_count = attrs["patron_count"]
             patreon_sum = attrs["pledge_sum"]
         except:
+            import traceback
+            traceback.print_exc()
             patreon_count = 0
             patreon_sum = 0
     else:
@@ -69,6 +76,17 @@ def index():
     else:
         lp_count = 0
         lp_sum = 0
+    
+    opencollective = _cfg("opencollective-campaign")
+    if opencollective:
+        oc = requests.get("https://opencollective.com/{}.json".format(opencollective)).json()
+        oc_count = oc['backersCount']
+        oc_sum = int(oc['yearlyIncome'])
+        # Convert from yearly to monthly
+        oc_sum = oc_sum // 12
+    else:
+        oc_count = 0
+        oc_sum = 0
 
     github_token = _cfg("github-token")
     if github_token:
@@ -113,6 +131,7 @@ def index():
             patreon_count=patreon_count, patreon_sum=patreon_sum,
             lp_count=lp_count, lp_sum=lp_sum,
             gh_count=gh_count, gh_sum=gh_sum, gh_user=gh_user,
+            oc_count=oc_count, oc_sum=oc_sum,
             currency=currency)
 
 @html.route("/setup", methods=["POST"])
@@ -195,7 +214,7 @@ def login():
         return redirect("admin")
     return redirect("panel")
 
-@html.route("/logout")
+@html.route("/logout", methods=["POST"])
 @loginrequired
 def logout():
     logout_user()
@@ -241,13 +260,15 @@ def donate():
         user.stripe_customer = customer.id
         db.add(user)
     else:
-        customer = stripe.Customer.retrieve(user.stripe_customer)
+        if user.stripe_customer:
+            customer = stripe.Customer.retrieve(user.stripe_customer)
+        else:
+            customer = stripe.Customer.create(email=user.email, card=stripe_token)
+            user.stripe_customer = customer.id
+            db.update(customer)
         new_source = customer.sources.create(source=stripe_token)
         customer.default_source = new_source.id
         customer.save()
-
-    donation = Donation(user, type, amount, project, comment)
-    db.add(donation)
 
     try:
         charge = stripe.Charge.create(
@@ -260,7 +281,11 @@ def donate():
         db.rollback()
         db.close()
         return { "success": False, "reason": "Your card was declined." }
+    
+    transaction = stripe.BalanceTransaction.retrieve(charge.balance_transaction);
 
+    donation = Donation(user, type, transaction.net, project, comment)
+    db.add(donation)
     db.commit()
 
     send_thank_you(user, amount, type == DonationType.monthly)
@@ -330,7 +355,7 @@ def panel():
         recurring=lambda u: [d for d in u.donations if d.type == DonationType.monthly and d.active],
         currency=currency)
 
-@html.route("/cancel/<id>")
+@html.route("/cancel/<id>", methods=["POST"])
 @loginrequired
 def cancel(id):
     donation = Donation.query.filter(Donation.id == id).first()
