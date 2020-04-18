@@ -5,7 +5,7 @@ from fosspay.config import _cfg
 import sys
 
 if len(sys.argv) != 3:
-    print(f"Usage: {sys.argv[0]} <amount in cents> <comment>")
+    print("Usage: {} <amount in cents> <comment>".format(sys.argv[0]))
     sys.exit(1)
 
 amount = int(sys.argv[1])
@@ -17,4 +17,4 @@ invoice.comment = comment
 db.add(invoice)
 db.commit()
 
-print(f"{_cfg('protocol')}://{_cfg('domain')}/invoice/{invoice.external_id}")
+print("{}://{}/invoice/{}".format(_cfg('protocol'), _cfg('domain'), invoice.external_id))

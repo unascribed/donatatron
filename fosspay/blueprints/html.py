@@ -112,7 +112,7 @@ def index():
         r = requests.post("https://api.github.com/graphql", json={
             "query": query
         }, headers={
-            "Authorization": f"bearer {github_token}"
+            "Authorization": "bearer {}".format(github_token)
         })
         result = r.json()
         nodes = result["data"]["viewer"]["sponsorsListing"]["tiers"]["nodes"]

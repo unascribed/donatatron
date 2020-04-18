@@ -1,0 +1,249 @@
+body {
+	font-family: system-ui, sans-serif;
+	background-color: #ECEFF1;
+	color: #1A2327;
+	margin: 0;
+}
+*, *:before, *:after {
+	box-sizing: border-box;
+}
+.well {
+	background: #009688;
+	color: #FFF;
+	padding: 16px;
+}
+.well h1 {
+	line-height: 128px;
+	vertical-align: middle;
+}
+.text-muted {
+	opacity: 0.7;
+}
+.text-center {
+	text-align: center;
+}
+h3 {
+	border-bottom: 1px #607D8BAA solid;
+	padding-bottom: 4px;
+	font-weight: 400;
+}
+.buttonbar {
+	display: flex;
+}
+.buttonbar button {
+	flex: 1;
+}
+button {
+	background-color: #C2185B;
+	color: #FFF;
+	border: none;
+	padding: 8px 16px;
+	margin-left: 2px;
+	margin-right: 2px;
+	border-radius: 2px;
+	box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.2), 0px 2px 4px rgba(0, 0, 0, 0.2);
+	transition: box-shadow 0.4s, background-color 0.4s, transform 0.4s;
+	cursor: pointer;
+}
+button:disabled {
+	background: #0002 !important;
+	color: #000A !important;
+	box-shadow: none !important;
+	cursor: initial !important;
+	cursor-events: none !important;
+	transform: none !important;
+}
+button.button-spicy {
+	background-color: #FFA000;
+	color: #000;
+}
+button.button-spicy:hover {
+	background-color: #FFB300;
+}
+button.button-spicy.active, button.button-spicy:active {
+	background-color: #FFC107;
+}
+
+button.button-happy {
+	background-color: #2E7D32;
+}
+button.button-happy:hover {
+	background-color: #43A047;
+}
+button.button-happy.active, button.button-happy:active {
+	background-color: #4CAF50;
+}
+button:hover {
+	background-color: #E91E63;
+}
+button.active, button:active {
+	background-color: #E91E63;
+	box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.5), 0px 4px 8px rgba(0, 0, 0, 0.5);
+	transform: translateY(-2px);
+	position: relative;
+	z-index: 2;
+}
+.logo {
+	width: 128px;
+	height: 128px;
+	border-radius: 4px;
+}
+a:any-link:not([style*="color"]) {
+	text-decoration: none;
+	color: #2196F3;
+}
+a:any-link:hover {
+	text-decoration: underline;
+}
+.alert {
+	border-radius: 8px;
+	border-width: 4px;
+	border-style: solid;
+	padding: 8px;
+	margin-top: 16px;
+}
+.alert.alert-danger {
+	background: #FFC107;
+	color: #000;
+	border-color: #FF6F00;
+}
+h1 {
+	font-weight: 400;
+	margin: 0;
+}
+.pull-right {
+	float: right;
+}
+.pull-left {
+	float: left;
+}
+.clearfix:after {
+	content: "";
+	display: table;
+	clear: both;
+}
+.hidden {
+	display: none;
+}
+.container {
+	max-width: 640px;
+	margin: auto;
+}
+hr {
+	border: none;
+	background: none;
+	height: 0;
+	border-bottom: 1px #607D8BAA solid;
+}
+.input-addon {
+	display: inline-block;
+	background: #009688;
+	color: #FFF;
+	font-weight: bold;
+	border-top-left-radius: 2px;
+	border-bottom-left-radius: 2px;
+	height: 36px;
+	padding: 8px;
+}
+.input-addon + input {
+	height: 36px;
+}
+input[type="text"], input[type="password"] {
+	font-family: system-ui, sans-serif;
+	font-size: 1rem;
+	background: #26323822;
+	color: #000;
+	border: none;
+	border-bottom: 2px #607D8B solid;
+	padding: 8px;
+	margin: 0;
+}
+.dropdown {
+	position: relative;
+	display: inline-block;
+}
+.dropdown select:focus + .decoration {
+	transform: scaleY(-1);
+}
+select {
+	font-family: system-ui, sans-serif;
+	font-size: 1rem;
+	background: #26323822;
+	color: #000;
+	border: none;
+	border-bottom: 2px #607D8B solid;
+	padding: 8px;
+	padding-right: 32px;
+	margin: 0;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+	background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCI+PHBhdGggZD0iTTcgMTBsNSA1IDUtNUg3eiIvPjwvc3ZnPgo=");
+	background-position: right 8px center;
+	background-repeat: no-repeat;
+}
+select option {
+	font-weight: 400;
+}
+
+.progress {
+	background: #CFD8DC;
+	border-radius: 2px;
+	border: 1px #37474F solid;
+	height: 24px;
+	margin-bottom: 32px;
+	padding: 0;
+	white-space: none;
+	position: relative;
+}
+
+.progress .progress-bar {
+	overflow: hidden;
+	font-weight: bold;
+	text-shadow: 0px 0px 2px rgba(0, 0, 0, 0.5);
+	background-image: repeating-linear-gradient(
+		70deg,
+		#00000000,
+		#00000000 10px,
+		#00000011 10px,
+		#00000011 20px
+	);
+	background-attachment: fixed;
+	line-height: 22px;
+	vertical-align: middle;
+	height: 100%;
+	float: left;
+	text-align: center;
+}
+
+.progress .progress-marker {
+	z-index: 5;
+	width: 3px;
+	transform: translateX(-50%);
+	background-color: #F44336;
+	color: #F44336;
+	position: absolute;
+	top: 23px;
+	height: 24px;
+}
+.progress .progress-marker:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: -23px;
+	left: 1px;
+	width: 1px;
+	height: 22px;
+	background: #FFF;
+}
+
+.progress .progress-marker .label {
+	position: absolute;
+	bottom: 0;
+	right: 6px;
+	font-weight: bold;
+}
+.progress .progress-marker .label.right {
+	right: initial;
+	left: 6px;
+}
