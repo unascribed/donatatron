@@ -66,8 +66,9 @@ class Donation(Base):
     active = Column(Boolean)
     payments = Column(Integer)
     hidden = Column(Boolean, server_default='f', nullable=False)
+    charge_on_first = Column(Boolean, server_default='f', nullable=False)
 
-    def __init__(self, user, type, amount, project=None, comment=None):
+    def __init__(self, user, type, amount, project=None, comment=None, charge_on_first=False):
         self.user = user
         self.type = type
         self.amount = amount
@@ -77,6 +78,7 @@ class Donation(Base):
         self.comment = comment
         self.active = True
         self.payments = 1
+        self.charge_on_first = charge_on_first
         if project:
             self.project_id = project.id
 

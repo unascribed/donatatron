@@ -20,9 +20,12 @@ donations = Donation.query \
     .all()
 
 limit = datetime.now() - timedelta(days=30)
+limit_first = datetime.today().replace(day=1)
+print("Non-first donations limit: {}".format(limit));
+print("First donations limit: {}".format(limit_first));
 
 for donation in donations:
-    if donation.updated < limit:
+    if (not donation.charge_on_first and donation.updated < limit) or (donation.charge_on_first and donation.updated < limit_first):
         print("Charging {}".format(donation))
         user = donation.user
         customer = stripe.Customer.retrieve(user.stripe_customer)

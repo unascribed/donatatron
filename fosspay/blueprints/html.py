@@ -229,6 +229,7 @@ def donate():
     type = request.form.get("type")
     comment = request.form.get("comment")
     project_id = request.form.get("project")
+    charge_on_first = type == "monthly-first"
 
     # validate and rejigger the form inputs
     if not email or not stripe_token or not amount or not type:
@@ -262,12 +263,11 @@ def donate():
     else:
         if user.stripe_customer:
             customer = stripe.Customer.retrieve(user.stripe_customer)
+            new_source = customer.sources.create(source=stripe_token)
+            customer.default_source = new_source.id
         else:
             customer = stripe.Customer.create(email=user.email, card=stripe_token)
             user.stripe_customer = customer.id
-            db.update(customer)
-        new_source = customer.sources.create(source=stripe_token)
-        customer.default_source = new_source.id
         customer.save()
 
     try:
@@ -284,7 +284,7 @@ def donate():
     
     transaction = stripe.BalanceTransaction.retrieve(charge.balance_transaction);
 
-    donation = Donation(user, type, transaction.net, project, comment)
+    donation = Donation(user, type, transaction.net, project, comment, charge_on_first)
     db.add(donation)
     db.commit()
 

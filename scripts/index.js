@@ -93,7 +93,7 @@
             key: window.stripe_key,
             image: window.avatar,
             locale: 'auto',
-            description: donation.type == "monthly" ? i18n["Monthly Donation"] : i18n["One-time Donation"],
+            description: donation.type == "once" ? i18n["One-time Donation"] : i18n["Monthly Donation"],
             panelLabel: i18n["Donate "] + "{{amount}}",
             amount: donation.amount,
             currency: currency,
