@@ -88,6 +88,12 @@ window.email = "{{user.email}}";
           <button data-frequency="monthly-first" type="button"
             class="btn btn-default {{"active" if _cfg("default-type")=="monthly-first" else ""}}"
           >Monthly (on the 1st)</button>
+          <br/>
+        </div>
+        <div style="margin-top: 16px; text-align: justify;">
+          <p class="description-frequency" style="display: {{"initial" if _cfg("default-type")=="once" else "none"}}" id="description-frequency-once">You'll be charged today, then never again.</p>
+          <p class="description-frequency" style="display: {{"initial" if _cfg("default-type")=="monthly" else "none"}}" id="description-frequency-monthly">You'll be charged today, then again every 30 days until you cancel. The day of the month you're actually charged will drift. This is how "Monthly" used to work.</p>
+          <p class="description-frequency" style="display: {{"initial" if _cfg("default-type")=="monthly-first" else "none"}}" id="description-frequency-monthly-first">You'll be charged today, then again on the 1st of every month until you cancel. Makes it easier to keep track of things for both of us; recommended.</p>
         </div>
     </div>
     {% if len(projects) > 1 %}

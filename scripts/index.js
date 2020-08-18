@@ -46,6 +46,8 @@
         document.querySelector(".frequencies .active").classList.remove("active");
         e.target.classList.add("active");
         donation.type = e.target.dataset.frequency;
+		document.querySelectorAll(".description-frequency").forEach((e) => e.style.display = "none");
+		document.querySelector("#description-frequency-"+e.target.dataset.frequency).style.display = "initial";
     }
 
     var amounts = document.querySelectorAll(".amounts button");
